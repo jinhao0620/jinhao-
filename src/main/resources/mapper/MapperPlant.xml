@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- namespace 命名空间 早期版本是可选的 现在是必须的 可以是随意的名称 但是最好是全限定名称 在接口开发中使用对应接口的全限定名称 -->
+<mapper namespace="com.liangqixuan.week1.dao.PlantMapperDao">
+
+	<!-- 植物表和类别表联查 -->
+	<select id="findPlantAndCategory" resultMap="map" parameterType="map">
+		SELECT
+		plant.id AS id,
+		plant.`name` AS `name`,
+		plant.miaoshu AS miaoshu,
+		plant.cid AS cid,
+		category.id AS cateId,
+		category.cname AS cname
+		FROM
+		plant
+		INNER JOIN category ON plant.cid = category.id
+		<where>
+			<if test="mname!=null and mname!=''">
+				and name like concat('%',#{mname},'%')
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询植物对象 -->
+	<select id="lookPlant" resultType="plant" parameterType="int">
+		select * from plant where id=#{id}
+	</select>
+	
+	<!-- 查询类别集合 -->
+	<select id="lookCategory" resultType="category">
+		select * from category
+	</select>
+	
+	<!-- 修改对象信息 -->
+	<update id="updatePlant" parameterType="plant">
+		update plant set name=#{name},miaoshu=#{miaoshu},cid=#{cid} where id=#{id}
+	</update>
+	
+	<!-- 删除植物的对象信息 -->
+	<delete id="deletePlant" parameterType="int">
+		delete from plant where id=#{id}
+	</delete>
+	
+	<!-- 添加植物对象的方法 -->
+	<insert id="addPlant" parameterType="plant">
+		insert into plant(name,miaoshu,cid) values(#{name},#{miaoshu},#{cid})
+	</insert>
+	
+	<!-- 批量删除的方法 -->
+	<delete id="deleteAll" parameterType="string">
+		delete from plant where id in(${value})
+	</delete>
+
+</mapper>
